@@ -25,6 +25,8 @@ public class Signup extends AppCompatActivity {
     TextView txtlogin;
     DatabaseReference database = FirebaseDatabase.getInstance().getReference();
 
+
+
     private boolean validateData() {
         String fullname = edit1.getEditText().getText().toString().trim();
         String phone = edit2.getEditText().getText().toString().trim();
@@ -43,7 +45,7 @@ public class Signup extends AppCompatActivity {
             return false;
 
         } else if(username.length() < 6) {
-            edit3.setError("at least 6 characters");
+            edit3.setError("Username must be at least 6 characters");
             return false;
         }
         else return true;
@@ -54,7 +56,7 @@ public class Signup extends AppCompatActivity {
             edit4.setError("Field can't be empty");
             return false;
         } else if(password.length() < 6 ){
-            edit4.setError("at least 6 characters");
+            edit4.setError("Password must be at least 6 characters");
             return false;
         }
         return true;
@@ -70,7 +72,7 @@ public class Signup extends AppCompatActivity {
         edit4 = findViewById(R.id.editpassword);
         btnsignup = findViewById(R.id.btnSignup);
         txtlogin = findViewById(R.id.textViewLogin);
-
+        TextView result = findViewById(R.id.result);
         btnsignup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -79,8 +81,8 @@ public class Signup extends AppCompatActivity {
                 final String txtphone = edit2.getEditText().getText().toString();
                 final String txtusername = edit3.getEditText().getText().toString();
                 final String txtpass = edit4.getEditText().getText().toString();
-
-
+                //get encode
+                String empass = encryptedPassword.encode(txtpass.toString());
                 // Check validate
                 if (!validateData() | !validatePassword()) {
                     return;
@@ -91,14 +93,14 @@ public class Signup extends AppCompatActivity {
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                             //Check phone
 //                            if(snapshot)
-                            User user = new User(txtfullname, txtphone, txtpass);
+                            User user = new User(txtfullname, txtphone, empass);
                             database.child("users").child(txtusername).setValue(user);
 
                             //show success message  then finish
 
                             CustomToast.makeText(Signup.this,"Register Successfully!",CustomToast.LENGTH_LONG,CustomToast.SUCCESS,true).show();
 
-                            finish();
+                            startActivity(new Intent(Signup.this, Login.class));
 
 
                         }
@@ -111,7 +113,7 @@ public class Signup extends AppCompatActivity {
                     });
 
                 }
-                startActivity(new Intent(Signup.this, MainActivity.class));
+
 
 
             }

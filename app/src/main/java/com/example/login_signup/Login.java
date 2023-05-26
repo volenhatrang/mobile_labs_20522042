@@ -38,6 +38,7 @@ public class Login extends AppCompatActivity {
             public void onClick(View view) {
                 String username = edit1.getEditText().getText().toString();
                 String pass = edit2.getEditText().getText().toString();
+                String checkpass = encryptedPassword.encode(pass);
                 //check fill
                 if(username.isEmpty()){
                     edit1.setError("Field can't be empty");
@@ -50,14 +51,17 @@ public class Login extends AppCompatActivity {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                             if(snapshot.hasChild(username)){
-                                final String getpassword = snapshot.child(username).child("password").getValue(String.class);
-                                if(getpassword.equals(pass)){
+
+                                String getpassword = snapshot.child(username).child("password").getValue(String.class);
+
+                                if(getpassword.equals(checkpass)){
                                     CustomToast.makeText(Login.this,"Successfully Logged in",CustomToast.LENGTH_LONG,CustomToast.SUCCESS,true).show();
                                     String s = snapshot.child(username).child("fullName").getValue(String.class);
                                     Intent i = new Intent();
                                     i.setClass(Login.this, MainActivity.class);
                                     i.putExtra("Fname", s);
                                     startActivity(i);
+
                                 }
                                 else{
                                     CustomToast.makeText(Login.this,"Username or Password is incorrect",CustomToast.LENGTH_LONG,CustomToast.ERROR,true).show();
